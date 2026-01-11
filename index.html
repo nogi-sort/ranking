@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>乃木坂46 人気ソート</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./style.css?v=20260111_6" />
+  <script src="./app.js?v=20260111_6" defer></script>
+
+
+</head>
+<body>
+
+  <!-- =========================================
+       Header
+  ========================================== -->
+  <header class="topbar">
+    <div class="brand">乃木坂46 ソート</div>
+    <div class="status" id="statusText"></div>
+  </header>
+
+  <main class="container">
+
+    <!-- =========================================
+         Screen : Start
+    ========================================== -->
+    <section id="screenStart" class="screen startScreen">
+     <div class="startTop">
+       <div class="startTitle">乃木坂46 ソート</div>
+     </div>
+      <div id="debugStart" style="font-size:12px;color:#999;margin-top:8px;text-align:center;"></div>
+
+      <div class="startCard">
+        <ul class="startBullets">
+          <li>数分かかります。</li>
+          <li>リロードすると最初からになります。</li>
+          <li>回答できるのは端末につき1回までです。</li>
+        </ul>
+        <div class="startNote">
+          回答は集計してデータ化し、分析に活用します。
+        </div>
+      </div>
+
+      <div class="startCard">
+        <div class="field">
+          <div class="fieldLabel">性別</div>
+          <div class="genderGrid">
+            <label class="chipRadio">
+              <input type="radio" name="gender" value="男" />
+              <span>男</span>
+            </label>
+            <label class="chipRadio">
+              <input type="radio" name="gender" value="女" />
+              <span>女</span>
+            </label>
+            <label class="chipRadio">
+              <input type="radio" name="gender" value="その他" />
+              <span>その他</span>
+            </label>
+            <label class="chipRadio">
+              <input type="radio" name="gender" value="回答しない" />
+              <span>回答しない</span>
+            </label>
+          </div>
+        </div>
+
+        <button id="btnStart" class="startBtn" type="button">START</button>
+        
+
+        <div class="startTiny">
+          ※途中で閉じた場合も最初からになります
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================
+         Screen : Sort
+    ========================================== -->
+    <section id="screenSort" class="screen hidden sortScreen">
+      <!-- 上：進行度（円） -->
+      <div class="sortTop">
+        <div class="progressRingWrap">
+          <div class="progressRing" id="progressRing" style="--p:0">
+            <div class="progressRingInner">
+              <div class="progressNo" id="progressNo">No.1</div>
+              <div class="progressPct" id="progressPct">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sortHint">※リロードするとトップに戻ります</div>
+     </div>
+
+     <!-- 中：2択カード -->
+      <div class="sortCards">
+        <button id="btnLeft" class="memberCard" type="button">
+          <div class="memberImgWrap">
+            <img id="imgLeft" alt="" />
+          </div>
+          <div class="memberName" id="nameLeft"></div>
+        </button>
+
+       <button id="btnRight" class="memberCard" type="button">
+          <div class="memberImgWrap">
+            <img id="imgRight" alt="" />
+          </div>
+        <div class="memberName" id="nameRight"></div>
+        </button>
+     </div>
+
+     <!-- 下：ボタン（戻る小さめ、引き分け大きめ） -->
+      <div class="sortBottom">
+        <button id="btnUndo" class="btnGhost btnUndo" type="button">← 1つ前に戻る</button>
+        <button id="btnTie" class="btnPrimary btnTie" type="button">引き分け</button>
+      </div>
+
+      <!-- 旧表示は不要なのでcompareTextは残さない -->
+    </section>
+
+    <!-- =========================================
+         Screen : Result
+    ========================================== -->
+    <section id="screenResult" class="screen hidden resultScreen">
+      <div class="resultTop">
+        <div class="resultTitle">結果</div>
+        <div class="resultSub">あなたのソート結果です</div>
+      </div>
+
+      <div class="resultCard">
+        <div id="resultList" class="resultList compact"></div>
+      </div>
+
+      <div class="resultCard">
+        <button id="btnSend" class="resultSendBtn" type="button">この結果を送信する</button>
+        <div class="resultTiny">
+          ※送信後はやり直しできません
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         Screen : Thanks / Submitted
+    ========================================== -->
+    <section id="screenThanks" class="screen hidden thanksScreen">
+      <div class="thanksTop">
+        <div class="thanksTitle">送信完了</div>
+      </div>
+
+      <div class="thanksCard">
+        <div id="thanksText" class="thanksText">
+          送信を受け付けました。反映まで数秒かかる場合があります。ありがとうございました。
+        </div>
+
+        <div class="thanksTiny">
+          端末につき1回までの回答となっています。
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>

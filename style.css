@@ -1,0 +1,541 @@
+:root { --gap: 14px; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  background: #fafafa;
+  color: #111;
+}
+
+.topbar{
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 10px 14px;
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+}
+
+.brand{ font-weight: 700; }
+.status{ font-size: 12px; color: #666; }
+
+.container{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 14px 40px;
+}
+
+.screen h1{ margin: 0 0 10px; }
+.hidden{ display:none; }
+
+.card{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 10px;
+}
+
+.field{ margin: 10px 0; }
+.radioRow{ display:flex; gap: 12px; flex-wrap: wrap; }
+
+.muted{ color:#666; }
+.tiny{ font-size: 12px; }
+
+.primary{
+  background:#111;
+  color:#fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor:pointer;
+}
+.secondary{
+  background:#fff;
+  border:1px solid #ddd;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor:pointer;
+}
+.danger{
+  background:#fff;
+  border:1px solid #f2b8b8;
+  color:#b00020;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor:pointer;
+}
+
+.versus{
+  display:grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: var(--gap);
+  align-items: center;
+  margin-top: 12px;
+}
+.vs{ text-align:center; color:#888; font-weight:700; }
+
+.pick{
+  border:1px solid #eee;
+  background:#fff;
+  border-radius: 12px;
+  padding: 10px;
+  cursor:pointer;
+  text-align: left;
+}
+.pick img{
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  border-radius: 10px;
+  background:#f4f4f4;
+}
+.name{ font-weight: 700; margin-top: 8px; }
+.sub{ font-size: 12px; margin-top: 2px; }
+
+.actions{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.progressRow{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.resultList{
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0;
+}
+.resultRow{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius: 10px;
+  padding: 10px;
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+pre{
+  white-space: pre-wrap;
+  background:#111;
+  color:#eee;
+  padding: 10px;
+  border-radius: 10px;
+  overflow:auto;
+}
+/* =========================
+   Start Screen
+========================= */
+.startScreen{
+  min-height: calc(100vh - 56px);
+  padding: 22px 14px 24px;
+  background:
+    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
+    linear-gradient(#faf7ff, #ffffff);
+}
+
+.startTop{
+  max-width: 760px;
+  margin: 6px auto 12px;
+  text-align: center;
+}
+
+.startTitle{
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: rgba(0,0,0,0.82);
+}
+
+.startCard{
+  max-width: 760px;
+  margin: 12px auto 0;
+  background: rgba(255,255,255,0.75);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.startBullets{
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.6;
+  color: rgba(0,0,0,0.72);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.startNote{
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(0,0,0,0.60);
+}
+
+.fieldLabel{
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.72);
+  margin-bottom: 10px;
+}
+
+.genderGrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.chipRadio{
+  display: block;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.80);
+  border: 1px solid rgba(0,0,0,0.10);
+  padding: 12px 10px;
+  text-align: center;
+  font-weight: 800;
+  color: rgba(0,0,0,0.78);
+}
+
+.chipRadio input{
+  display: none;
+}
+
+.chipRadio:has(input:checked){
+  border-color: rgba(122,63,153,0.55);
+  box-shadow: 0 10px 22px rgba(122,63,153,0.18);
+  background: rgba(122,63,153,0.10);
+}
+
+.startBtn{
+  margin-top: 14px;
+  width: 100%;
+  padding: 16px 12px;
+  border-radius: 16px;
+  border: 0;
+  background: #7a3f99;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  box-shadow: 0 16px 34px rgba(122,63,153,0.28);
+  font-size: 20px
+}
+
+.startBtn:active{ transform: translateY(1px); }
+
+.startTiny{
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  text-align: center;
+}
+
+/* ちょい広い端末で余白調整 */
+@media (min-width: 520px){
+  .startTitle{ font-size: 26px; }
+  .startBullets{ font-size: 15px; }
+}
+
+/* =========================
+   Sort Screen (Mobile first)
+========================= */
+.sortScreen{
+  /* 背景は画像なしで近づける（後で背景画像に差し替えも可能） */
+  min-height: calc(100vh - 56px); /* topbar分がある想定。無ければ消してOK */
+  padding: 18px 14px 24px;
+  background:
+    radial-gradient(1200px 500px at 50% -100px, rgba(122,63,153,0.55), rgba(122,63,153,0.05) 60%, rgba(255,255,255,1) 80%),
+    linear-gradient(#faf7ff, #ffffff);
+}
+
+.sortTop{
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.sortHint{
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+/* 円形進行度（conic-gradient） */
+.progressRingWrap{
+  display: grid;
+  place-items: center;
+}
+
+.progressRing{
+  width: 132px;
+  height: 132px;
+  border-radius: 999px;
+  background:
+    conic-gradient(#7a3f99 calc(var(--p) * 1%), rgba(122,63,153,0.18) 0);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 30px rgba(122,63,153,0.18);
+}
+
+.progressRingInner{
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+  border: 2px solid rgba(255,255,255,0.8);
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}
+
+.progressNo{
+  font-weight: 700;
+  color: rgba(0,0,0,0.78);
+}
+
+.progressPct{
+  font-size: 26px;
+  font-weight: 800;
+  color: rgba(0,0,0,0.85);
+}
+
+/* 2択カード */
+.sortCards{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.memberCard{
+  appearance: none;
+  border: 0;
+  background: rgba(255,255,255,0.75);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+.memberImgWrap{
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.03);
+}
+
+/* 縦長大きめ（理想画像の比率） */
+.memberCard img{
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.memberName{
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(0,0,0,0.82);
+}
+
+/* 下ボタン */
+.sortBottom{
+  max-width: 760px;
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr; /* 引き分けを大きく */
+  gap: 12px;
+}
+
+.btnGhost{
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.75);
+  font-weight: 700;
+}
+
+.btnPrimary{
+  padding: 14px 12px;
+  border-radius: 14px;
+  border: 0;
+  background: #7a3f99;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 14px 30px rgba(122,63,153,0.25);
+}
+
+/* 押した感 */
+.memberCard:active{ transform: translateY(1px); }
+.btnGhost:active, .btnPrimary:active{ transform: translateY(1px); }
+
+/* 大きいスマホ〜タブレットで少し余白調整 */
+@media (min-width: 520px){
+  .progressRing{ width: 148px; height: 148px; }
+  .progressRingInner{ width: 126px; height: 126px; }
+  .memberName{ font-size: 19px; }
+}
+/* =========================
+   Result Screen
+========================= */
+.resultScreen{
+  min-height: calc(100vh - 56px);
+  padding: 22px 14px 24px;
+  background:
+    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
+    linear-gradient(#faf7ff, #ffffff);
+}
+
+.resultTop{
+  max-width: 760px;
+  margin: 6px auto 12px;
+  text-align: center;
+}
+
+.resultTitle{
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: rgba(0,0,0,0.82);
+}
+
+.resultSub{
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+.resultCard{
+  max-width: 760px;
+  margin: 12px auto 0;
+  background: rgba(255,255,255,0.75);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* コンパクト縦リスト */
+.resultList.compact{
+  display: grid;
+  gap: 6px; /* 縦間隔は狭く */
+}
+
+/* 1行の見た目 */
+.resultRow{
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.rankNum{
+  font-weight: 900;
+  font-size: 16px;
+  color: rgba(122,63,153,0.95);
+  text-align: right;
+}
+
+.memberText{
+  font-weight: 800;
+  font-size: 14px;
+  color: rgba(0,0,0,0.82);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resultSendBtn{
+  width: 100%;
+  padding: 16px 12px;
+  border-radius: 16px;
+  border: 0;
+  background: #7a3f99;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: 0 16px 34px rgba(122,63,153,0.28);
+}
+
+/* =========================
+   Thanks Screen
+========================= */
+.thanksScreen{
+  min-height: calc(100vh - 56px);
+  padding: 22px 14px 24px;
+  background:
+    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
+    linear-gradient(#faf7ff, #ffffff);
+}
+
+.thanksTop{
+  max-width: 760px;
+  margin: 6px auto 12px;
+  text-align: center;
+}
+
+.thanksTitle{
+  font-size: 22px;
+  font-weight: 900;
+  color: rgba(0,0,0,0.82);
+}
+
+.thanksCard{
+  max-width: 760px;
+  margin: 12px auto 0;
+  background: rgba(255,255,255,0.75);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.10);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.thanksText{
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.7;
+  color: rgba(0,0,0,0.72);
+}
+
+.thanksTiny{
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+
+.resultSendBtn:active{ transform: translateY(1px); }
+
+.resultTiny{
+  margin-top: 10px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+  text-align: center;
+}
+
+
