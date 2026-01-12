@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>乃木坂46 ソート</title>
+  <title>乃木坂46 人気ソート</title>
 
   <!-- CSS -->
   <link rel="stylesheet" href="./style.css?v=prod1" />
@@ -121,21 +121,27 @@
 
       <!-- 旧表示は不要なのでcompareTextは残さない -->
     </section>
+    <!-- =========================================
+         Screen : Done (Sort Completed)
+    ========================================== -->
+    <section id="screenDone" class="screen hidden doneScreen">
+      <div class="doneTop">
+        <div class="doneTitle">ソート完了</div>
+        <div class="doneSub">結果を確認できます。</div>
+      </div>
+
+      <div class="doneCard">
+        <button id="btnViewResult" class="doneBtn" type="button">結果を見る</button>
+      </div>
+    </section>
 
     <!-- =========================================
          Screen : Result
     ========================================== -->
     <section id="screenResult" class="screen hidden resultScreen">
-      <div class="resultSendBar">
-        <button id="btnSend" class="resultSendBtn" type="button">この結果を送信する</button>
-        <div class="resultTiny">
-          ※送信後はやり直しできません
-        </div>
-      </div>
-
       <div class="resultTop">
         <div class="resultTitle">結果</div>
-        <div class="resultSub">あなたのソート結果です<br>結果を送信してください</div>
+        <div class="resultSub">あなたのソート結果です</div>
       </div>
 
       <div class="resultCard">
@@ -144,23 +150,17 @@
     </section>
 
     <!-- =========================================
-         Screen : Thanks / Submitted
+         Screen : Submitted
     ========================================== -->
-    <section id="screenThanks" class="screen hidden thanksScreen">
-      <div class="thanksTop">
-        <div class="thanksTitle">送信完了</div>
-      </div>
-
-      <div class="thanksCard">
-        <div id="thanksText" class="thanksText">
-          送信を受け付けました。反映まで数秒かかる場合があります。ありがとうございました。
-        </div>
-
-        <div class="thanksTiny">
-          端末につき1回までの回答となっています。
-        </div>
+    <section id="screenSubmitted" class="screen hidden">
+      <div class="card">
+        <h2 class="title">回答済みです</h2>
+        <p class="muted">
+          この端末からの回答は受付済みです。ありがとうございました。
+        </p>
       </div>
     </section>
+</section>
     <section id="screenSubmitted" class="screen hidden">
       <div class="card">
         <h2 class="title">回答済みです</h2>
@@ -174,6 +174,3 @@
 
 </body>
 </html>
-
-
-
