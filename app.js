@@ -10,6 +10,7 @@ const VERSION = "v1.0";
 
 const N = 36;
 const P = 1.5;
+
 window.addEventListener("error", (e) => {
   alert("JS Error: " + (e.message || e.error || "unknown"));
 });
@@ -26,8 +27,9 @@ const $ = (id) => document.getElementById(id);
 let screens = {
   start: null,
   sort: null,
+  done: null,
   result: null,
-  thanks: null,
+  submitted: null,
 };
 
 // DOMから画面要素を取り直す関数
@@ -35,8 +37,8 @@ function refreshScreens_() {
   screens = {
     start: $("screenStart"),
     sort: $("screenSort"),
+    done: $("screenDone"),
     result: $("screenResult"),
-    thanks: $("screenThanks"),
     submitted: $("screenSubmitted"),
   };
 }
@@ -55,10 +57,10 @@ function showScreen(key) {
   if (target) {
     target.classList.remove("hidden");
   } else {
-    // ここに来るのは「HTML側にそのIDが無い」時
     alert(`画面 "${key}" が見つかりません。index.html の id を確認してください。`);
   }
 }
+
 function routeOnLoadOrOpen_() {
   if (IS_PROD && isSubmitted()) {
     showScreen("submitted");
@@ -66,7 +68,6 @@ function routeOnLoadOrOpen_() {
   }
   return false;
 }
-
 
 function setStatus(text = "") {
   const el = $("statusText");
@@ -101,6 +102,21 @@ function markSubmitted() {
   localStorage.setItem(submittedKey_(), "true");
 }
 
+function getClientIdSafe_() {
+  const k = "nogi_sort_client_id";
+  let v = localStorage.getItem(k);
+  if (v) return v;
+
+  // crypto.randomUUID が無い環境でも落ちないように
+  if (crypto && typeof crypto.randomUUID === "function") {
+    v = crypto.randomUUID();
+  } else {
+    v = "cid_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+  }
+
+  localStorage.setItem(k, v);
+  return v;
+}
 
 /* =========================================================
    STATE
@@ -238,7 +254,6 @@ function renderStart() {
     return;
   }
   setStatus(IS_DEV ? "DEV MODE" : "");
-    // 送信済みなら submitted へ固定（スタートに戻さない）
   if (routeOnLoadOrOpen_()) return;
   showScreen("start");
 }
@@ -249,7 +264,7 @@ function renderSort() {
 
   const p = currentPair();
   if (!p) {
-    renderResult();
+    renderDone();
     return;
   }
 
@@ -258,8 +273,9 @@ function renderSort() {
 
   $("imgRight").src = members[p.right].image;
   $("nameRight").textContent = members[p.right].name;
+
   // 進行度（No / % / 円リング）
-  const inserted = Math.min(state.pointer, N); // 何人目まで挿入処理が進んだか
+  const inserted = Math.min(state.pointer, N);
   const pct = Math.round((inserted / N) * 100);
 
   const noEl = $("progressNo");
@@ -270,8 +286,13 @@ function renderSort() {
   if (noEl) noEl.textContent = `Q ${q}`;
   if (pctEl) pctEl.textContent = `${pct}%`;
   if (ringEl) ringEl.style.setProperty("--p", String(pct));
-
 }
+
+function renderDone() {
+  showScreen("done");
+  // ここで特に描画するものが無いなら、画面切替だけでOK
+}
+
 function renderResult() {
   showScreen("result");
 
@@ -280,7 +301,6 @@ function renderResult() {
   list.innerHTML = "";
 
   let rank = 1;
-
   // state.groups は「同率グループ」配列: 例 [[idx, idx], [idx], ...]
   for (const g of state.groups) {
     for (const i of g) {
@@ -289,7 +309,7 @@ function renderResult() {
 
       const rankEl = document.createElement("div");
       rankEl.className = "rankNum";
-      rankEl.textContent = String(rank); // 「1位」ではなく数字のみ
+      rankEl.textContent = String(rank);
 
       const nameEl = document.createElement("div");
       nameEl.className = "memberText";
@@ -298,85 +318,107 @@ function renderResult() {
       row.append(rankEl, nameEl);
       list.appendChild(row);
     }
-
     // 同率分だけ次の順位へ（例：1,1,3,...）
     rank += g.length;
   }
-
-  const btnSend = $("btnSend");
-  if (btnSend) {
-    btnSend.disabled = IS_PROD && isSubmitted();
-  }
 }
 
-async function sendResult() {
-  // 送信済みガード
-  if (IS_PROD && isSubmitted()) return;
+/* =========================================================
+   SEND (最大3秒待ち用の「待てる送信」)
+========================================================= */
+function sleep_(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
-  // ボタンが取れなければ、その時点で原因確定
-  const btn = $("btnSend");
-  if (!btn) {
-    alert("btnSend が見つかりません（index.htmlのID確認）");
-    return;
-  }
-
-  btn.disabled = true;
-  const originalText = btn.textContent;
-  btn.textContent = "送信中…";
-
-  // ① 先に完了画面へ（ここで止まらないのが大事）
+async function withTimeout_(promise, ms) {
+  const timeout = sleep_(ms).then(() => ({ ok: false, timeout: true }));
   try {
-    markSubmitted();
-    showScreen("thanks");
-    const t = $("thanksText");
-    if (t) t.textContent = "送信を受け付けました。反映まで数秒かかる場合があります。ありがとうございました。";
+    const res = await Promise.race([promise, timeout]);
+    return res;
   } catch (e) {
-    alert("Thanks画面への遷移でエラー: " + (e?.message || e));
-    btn.disabled = false;
-    btn.textContent = originalText;
-    return;
+    return { ok: false, error: e };
   }
-
-  // ② 裏で送信（ここで落ちてもUIは止めない）
-  setTimeout(() => {
-    try {
-      // stateが無い/壊れてる場合は送れないので中断（UIは完了扱いのまま）
-      if (!state || !state.groups) return;
-
-      const payload = {
-        client_id: getClientIdSafe_(),
-        gender: state.gender,
-        timestamp: new Date().toISOString(),
-        duration_sec: Math.round((Date.now() - state.startedAt) / 1000),
-        tie_count: state.tieCount,
-        compare_count: state.compareCount,
-        version: VERSION,
-        target_sheet: IS_DEV ? "responses_test" : "responses",
-        scores_in_A_order: computeScores(state.groups),
-      };
-
-      const body = JSON.stringify(payload);
-      const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
-
-      // sendBeacon優先（スマホで強い）
-      if (navigator.sendBeacon && navigator.sendBeacon(GAS_WEBAPP_URL, blob)) {
-        return;
-      }
-
-      // フォールバック：待たない fetch
-      fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body,
-      }).catch(() => {});
-    } catch (e) {
-      // 送信側の失敗はUIを止めない（ログだけ）
-      console.log("send background error:", e);
-    }
-  }, 0);
 }
 
+function buildPayload_() {
+  if (!state || !state.groups) return null;
+
+  return {
+    client_id: getClientIdSafe_(),
+    gender: state.gender,
+    timestamp: new Date().toISOString(),
+    duration_sec: Math.round((Date.now() - state.startedAt) / 1000),
+    tie_count: state.tieCount,
+    compare_count: state.compareCount,
+    version: VERSION,
+    target_sheet: IS_DEV ? "responses_test" : "responses",
+    scores_in_A_order: computeScores(state.groups),
+  };
+}
+
+// 送信：成功が「確定」したら {ok:true} を返す
+// 注意：GAS側のCORS事情があるので、まずは読めるfetchを試し、ダメならbeaconで「キュー成功」を成功扱いに寄せる
+async function sendResultAwaitable_() {
+  // 送信済みガード
+  if (IS_PROD && isSubmitted()) return { ok: true, already: true };
+
+  const payload = buildPayload_();
+  if (!payload) return { ok: false, error: new Error("state/groups が無いため送信できません") };
+
+  const body = JSON.stringify(payload);
+
+  // 1) 可能なら「レスポンスが読める」fetchを試す（成功確定しやすい）
+  //    CORSで落ちる環境もあるので、失敗したら次へ。
+  try {
+    const res = await fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      // CORSが通るならこれがベスト。通らない場合は例外になる。
+      mode: "cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body,
+    });
+
+    // res.ok の判定（GASが200返す想定）
+    if (res && res.ok) {
+      // JSONを返しているなら読む（読めなくてもok扱い）
+      try {
+        const data = await res.json();
+        if (data && data.status && data.status !== "success") {
+          return { ok: false, error: new Error("GAS returned non-success") };
+        }
+      } catch (_) {
+        // no-op: 読めなくても200なら成功寄りで扱う
+      }
+      return { ok: true, via: "fetch-cors" };
+    }
+  } catch (_) {
+    // no-op: 次へ
+  }
+
+  // 2) sendBeacon を試す（キュー成功ならかなり強い）
+  try {
+    const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
+    if (navigator.sendBeacon && navigator.sendBeacon(GAS_WEBAPP_URL, blob)) {
+      return { ok: true, via: "beacon" };
+    }
+  } catch (_) {
+    // no-op
+  }
+
+  // 3) 最後の手段：no-cors fetch（成功確定できないので ok:false 扱い）
+  try {
+    fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body,
+    }).catch(() => {});
+  } catch (_) {
+    // no-op
+  }
+
+  return { ok: false, via: "no-cors" };
+}
 
 /* =========================================================
    EVENTS
@@ -386,8 +428,6 @@ function bindEvents() {
   refreshScreens_();
 
   const btnStart = $("btnStart");
-  const dbg = $("debugStart");
-
   btnStart.addEventListener("click", () => {
     if (IS_PROD && isSubmitted()) {
       showScreen("submitted");
@@ -417,25 +457,35 @@ function bindEvents() {
   const btnUndo = $("btnUndo");
   if (btnUndo) btnUndo.addEventListener("click", () => undo());
 
-  const btnSend = $("btnSend");
-  if (btnSend) btnSend.addEventListener("click", () => sendResult());
-}
+  // 「結果を見る」ボタン：送信→最大3秒待ち→結果表示
+  const btnView = $("btnViewResult");
+  if (btnView) {
+    btnView.addEventListener("click", async () => {
+      // 連打防止
+      btnView.disabled = true;
 
+      // 送信を開始して最大3秒だけ待つ（表示は増やさない方針）
+      const r = await withTimeout_(sendResultAwaitable_(), 3000);
 
-function getClientIdSafe_() {
-  const k = "nogi_sort_client_id";
-  let v = localStorage.getItem(k);
-  if (v) return v;
+      // 画面遷移は必ず行う
+      renderResult();
 
-  // crypto.randomUUID が無い環境でも落ちないように
-  if (crypto && typeof crypto.randomUUID === "function") {
-    v = crypto.randomUUID();
-  } else {
-    v = "cid_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+      // 成功が確認できた場合のみ、送信済みにする
+      if (r && r.ok) {
+        markSubmitted();
+      } else if (r && r.timeout) {
+        // 3秒で終わらなかった場合：UIは増やさないので黙って結果へ
+        // 裏で1回だけ軽く再送（ベストエフォート）
+        try {
+          await sleep_(1200);
+          const r2 = await withTimeout_(sendResultAwaitable_(), 2500);
+          if (r2 && r2.ok) markSubmitted();
+        } catch (_) {}
+      }
+
+      // 結果画面に行った後、ボタンは戻さない（戻る導線が無い前提）
+    });
   }
-
-  localStorage.setItem(k, v);
-  return v;
 }
 
 /* =========================================================
@@ -454,6 +504,9 @@ async function boot() {
   const res = await fetch("./members.json");
   members = await res.json();
   preloadMemberImages_();
+
+  // 起動時ルーティング
+  if (routeOnLoadOrOpen_()) return;
 
   showScreen("start");   // ③ 最初は必ずスタート画面
 }
