@@ -399,9 +399,13 @@ pre{
   min-height: calc(100vh - 56px);
   padding: 22px 14px 24px;
   background:
-    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
+    radial-gradient(1200px 520px at 50% -120px,
+      rgba(122,63,153,0.55),
+      rgba(122,63,153,0.06) 60%,
+      rgba(255,255,255,1) 82%),
     linear-gradient(#faf7ff, #ffffff);
 }
+
 
 .resultTop{
   max-width: 760px;
@@ -467,112 +471,67 @@ pre{
   text-overflow: ellipsis;
 }
 
+
+
 /* =========================
-   Result Screen
+   Done Screen（ソート完了）
 ========================= */
-.resultScreen{
+.doneScreen{
   min-height: calc(100vh - 56px);
-  padding: 110px 14px 24px; /* ← 上に固定バーを置くので上paddingを増やす */
-  background:
-    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
-    linear-gradient(#faf7ff, #ffffff);
+  padding: 22px 14px 24px;
 }
 
-/* 上固定の送信バー */
-.resultSendBar{
-  position: fixed;
-  top: 56px; /* もし上に共通ヘッダー(56px)がある前提ならこれ。無ければ 0 に */
-  left: 0;
-  right: 0;
-  padding: 12px 14px 10px;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.10);
-  z-index: 9999;
+.doneTop{
+  max-width: 760px;
+  margin: 12px auto 14px;
+  text-align: center;
 }
 
-/* 既存ボタンを「押せ！」寄りに強調 */
-.resultSendBtn{
-  width: 100%;
+.doneTitle{
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.doneSub{
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(0,0,0,0.55);
+}
+
+.doneCard{
   max-width: 760px;
   margin: 0 auto;
-  display: block;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
 
-  padding: 18px 12px;      /* ← 少し大きく */
-  border-radius: 18px;     /* ← 少し丸く */
+.doneBtn{
+  width: 100%;
+  padding: 18px 12px;
+  border-radius: 18px;
   border: 0;
   background: #7a3f99;
   color: #fff;
   font-weight: 900;
-  font-size: 16px;         /* ← 少し大きく */
+  font-size: 16px;
   letter-spacing: 0.02em;
-  box-shadow: 0 18px 36px rgba(122,63,153,0.30);
+  cursor: pointer;
+  box-shadow: 0 16px 34px rgba(122,63,153,0.28);
 }
 
-/* 注意書き（固定バー内で中央寄せ） */
-.resultSendBar .resultTiny{
-  margin-top: 6px;
-  text-align: center;
+.doneBtn:active{
+  transform: translateY(1px);
+  box-shadow: 0 10px 20px rgba(122,63,153,0.25);
 }
 
-
-/* =========================
-   Thanks Screen
-========================= */
-.thanksScreen{
-  min-height: calc(100vh - 56px);
-  padding: 22px 14px 24px;
-  background:
-    radial-gradient(1200px 520px at 50% -120px, rgba(122,63,153,0.55), rgba(122,63,153,0.06) 60%, rgba(255,255,255,1) 82%),
-    linear-gradient(#faf7ff, #ffffff);
-}
-
-.thanksTop{
-  max-width: 760px;
-  margin: 6px auto 12px;
-  text-align: center;
-}
-
-.thanksTitle{
-  font-size: 22px;
-  font-weight: 900;
-  color: rgba(0,0,0,0.82);
-}
-
-.thanksCard{
-  max-width: 760px;
-  margin: 12px auto 0;
-  background: rgba(255,255,255,0.75);
-  border-radius: 18px;
-  padding: 14px;
-  box-shadow: 0 14px 38px rgba(0,0,0,0.10);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.thanksText{
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.7;
-  color: rgba(0,0,0,0.72);
-}
-
-.thanksTiny{
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(0,0,0,0.08);
-  font-size: 12px;
-  color: rgba(0,0,0,0.55);
-}
-
-
-.resultSendBtn:active{ transform: translateY(1px); }
-
-.resultTiny{
+.doneTiny{
   margin-top: 10px;
   font-size: 12px;
-  color: rgba(0,0,0,0.55);
   text-align: center;
+  opacity: 0.75;
 }
 
 
