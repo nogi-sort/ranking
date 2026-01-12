@@ -37,6 +37,7 @@ function refreshScreens_() {
     sort: $("screenSort"),
     result: $("screenResult"),
     thanks: $("screenThanks"),
+    submitted: $("screenSubmitted"),
   };
 }
 
@@ -58,6 +59,14 @@ function showScreen(key) {
     alert(`画面 "${key}" が見つかりません。index.html の id を確認してください。`);
   }
 }
+function routeOnLoadOrOpen_() {
+  if (IS_PROD && isSubmitted()) {
+    showScreen("submitted");
+    return true;
+  }
+  return false;
+}
+
 
 function setStatus(text = "") {
   const el = $("statusText");
@@ -225,11 +234,12 @@ function undo() {
 ========================================================= */
 function renderStart() {
   if (IS_PROD && isSubmitted()) {
-    showScreen("thanks");
-    $("thanksText").textContent = "この端末からは既に送信済みです。";
+    showScreen("submitted");
     return;
   }
   setStatus(IS_DEV ? "DEV MODE" : "");
+    // 送信済みなら submitted へ固定（スタートに戻さない）
+  if (routeOnLoadOrOpen_()) return;
   showScreen("start");
 }
 
@@ -379,6 +389,10 @@ function bindEvents() {
   const dbg = $("debugStart");
 
   btnStart.addEventListener("click", () => {
+    if (IS_PROD && isSubmitted()) {
+      showScreen("submitted");
+      return;
+    }
 
     const g = document.querySelector('input[name="gender"]:checked')?.value;
     if (!g) {
@@ -427,11 +441,19 @@ function getClientIdSafe_() {
 /* =========================================================
    BOOT
 ========================================================= */
+function preloadMemberImages_() {
+  for (const m of members) {
+    const img = new Image();
+    img.src = m.image; // members.json に入ってるパス
+  }
+}
+
 async function boot() {
   refreshScreens_();     // ① 画面DOM再取得
   bindEvents();          // ② ボタンにイベントを結びつける
   const res = await fetch("./members.json");
   members = await res.json();
+  preloadMemberImages_();
 
   showScreen("start");   // ③ 最初は必ずスタート画面
 }
