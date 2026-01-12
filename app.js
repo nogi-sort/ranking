@@ -1,7 +1,7 @@
 /* =========================================================
    CONFIG
 ========================================================= */
-const MODE = "dev"; // "dev" or "prod"  ← 公開前に必ず "prod" にする
+const MODE = "prod"; // "dev" or "prod"  ← 公開前に必ず "prod" にする
 const IS_DEV = MODE === "dev";
 const IS_PROD = MODE === "prod";
 
@@ -77,15 +77,21 @@ function getClientId() {
   return v;
 }
 
+function submittedKey_() {
+  // DEVとPRODでキーを分ける（DEVで送信済みになってもPRODに影響させない）
+  return IS_DEV ? "nogi_sort_submitted_dev" : "nogi_sort_submitted_prod";
+}
+
 function isSubmitted() {
-  if (IS_DEV) return false;
-  return localStorage.getItem("nogi_sort_submitted") === "true";
+  if (IS_DEV) return false; // DEVは無制限
+  return localStorage.getItem(submittedKey_()) === "true";
 }
 
 function markSubmitted() {
-  if (IS_DEV) return;
-  localStorage.setItem("nogi_sort_submitted", "true");
+  if (IS_DEV) return; // DEVは記録しない
+  localStorage.setItem(submittedKey_(), "true");
 }
+
 
 /* =========================================================
    STATE
