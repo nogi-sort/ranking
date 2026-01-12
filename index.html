@@ -126,6 +126,13 @@
          Screen : Result
     ========================================== -->
     <section id="screenResult" class="screen hidden resultScreen">
+      <div class="resultSendBar">
+        <button id="btnSend" class="resultSendBtn" type="button">この結果を送信する</button>
+        <div class="resultTiny">
+          ※送信後はやり直しできません
+        </div>
+      </div>
+
       <div class="resultTop">
         <div class="resultTitle">結果</div>
         <div class="resultSub">あなたのソート結果です</div>
@@ -133,13 +140,6 @@
 
       <div class="resultCard">
         <div id="resultList" class="resultList compact"></div>
-      </div>
-
-      <div class="resultCard">
-        <button id="btnSend" class="resultSendBtn" type="button">この結果を送信する</button>
-        <div class="resultTiny">
-          ※送信後はやり直しできません
-        </div>
       </div>
     </section>
 
@@ -174,3 +174,4 @@
 
 </body>
 </html>
+
